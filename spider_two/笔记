@@ -1,0 +1,101 @@
+
+解析模块
+    数据的分类
+        * 结构化的数据
+            特点：有固定的格式，如html，xml
+        * 非结构化的数据
+            示例：图片，音频，视频...这类的非结构化的数据以二进制的方式存储
+
+
+    1. 正则解析
+        1. 使用流程
+            1. 创建编译对象：pattern = '正则表达式'
+            2. 对字符串进行匹配: res = re.match(pattern, str)
+            3. 获取匹配结果  res.group()
+        2. 常用的方法
+            re.match(pattern, str): 返回开头的第一个，返回的是对象，用group()
+            re.search(pattern, str): 从字符串的开始往后匹配，返回匹配第一个， 返回对象
+            findall(html): 所有全部都去匹配，返回的是一个列表
+        3. 表达式
+            .  匹配任意字符（不包括\n）
+            \d 匹配数字
+            \s 匹配空白字符
+            \S 匹配非空白字符
+            \w 字母，数字, _
+            [...] 包含中括号中的内容: A[BCD]E   ---ABE ACE ADE
+            *   0次或多次
+            ？   0 或 1
+            +   1 或 多
+            {m}  m次
+            {m,n}  m 到 n 次
+
+        4.
+            贪婪匹配(.*):  在整个表达式匹配成功的前提下，尽可能多的匹配*
+            非贪婪匹配(.*?): 在整个表达式匹配成功的前提下，尽可能少的匹配*
+        5. findall() 的分组
+
+        6. exercise_one
+            '''
+                <div class="animal">
+                    <p class="name">
+                        <a title="tiger"></a>
+                    </p>
+                    <p class="contents">
+                        Two tigers two tigers run fast
+                    </p>
+                </div>
+
+                <div class="animal">
+                    <p class="name">
+                        <a title="rabbit"></a>
+                    </p>
+                    <p class="contents">
+                        Small white rabbit white and white
+                    </p>
+                </div>
+            '''
+            匹配结果
+                第一步：
+                    [("tiger", "Two tigers .."), ("rabbit", "Small rabbit...")]
+                第二步：
+                    动物名称：tiger
+                    动物描述：Two tigers
+    2. xpath
+
+    3. beautifulsoup
+
+
+
+数据的持久化存储
+    存入mangoDB数据库（pymongo 模块回顾）
+
+
+requests模块
+    安装 pip3 install requests
+        Anaconda Prompt: conda install requests
+        window cmd: python -m pip install requests   # python -m 是以管理员身份执行
+        Ubuntu: sudo pip3 install requests
+
+    常用方法
+        1. get(url, headers={})
+            发情请求，并获取响应对象
+
+        2. 响应对象的属性
+            res.text           : 字符串
+            res.content        :  字节流
+            res.encoding       : 指定字符编码(utf-8)
+            res.status_code    : 返回响应码
+            res.url            : 返回实际数据的url
+
+        get() 使用场景
+            1. 没有查询参数
+                res = request.get(url, headers={})
+            2. 有查询参数（params）
+                res = requests.get(
+                    url,
+                    params=params,
+                    headers=headers
+                )
+
+
+
