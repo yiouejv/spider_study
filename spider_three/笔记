@@ -1,0 +1,140 @@
+
+1. Cookie模拟登陆
+    什么是cookie, session
+    HTTP是一种无连接协议，客户端和服务器交互仅仅限于 请求/响应过程，结束后断开，
+    下一次请求时，服务器会认为是一个新的客户端，为了维护他们的连接，必须在一个地方
+    保存客户端的信息
+
+    cookie: 通过在客户端记录的信息确定用户身份
+    session: 通过服务器端记录的信息确定用户的身份
+
+    案例：利用cookie模拟登陆人人网
+     * 先登陆成功后，拿到cookie，放在headers中请求
+
+
+2. requests 模块
+    get(url, params=params, headers=headers)
+    params: 查询参数，字典，不用编码，也不用拼接url
+
+    响应对象res的属性
+        encoding: 响应的字符编码, res.encoding='utf-8'
+        text    : 获取字符串
+        content : 获取字节流
+        status_code: http响应码
+        url     : 返回实际数据的url
+
+
+3. 非结构化数据的存储
+    content = res.content
+    withs open(filename, 'wb') as wf:
+        wf.write()
+
+
+4. post方法
+    post(url, data=data, headers=headers)
+        data: Form表单数据，字典, 不用编码也不用转码
+
+
+5. get()方法中不用的参数
+    代理ip(参数名: proxies)
+    获取代理ip的网站
+        西刺代理ip    http://www.xicidaili.com/
+        快代理  http://www.kuaidaili.com
+        全网代理
+
+        普通代理
+            格式：proxies={
+                    '协议': '协议://ip地址:端口号',
+                 }
+
+             proxies = {
+                'http': 'http://xxx.xxx.xxx.xx:port'
+             }
+
+        私密代理
+            格式
+                proxies = {
+                    'http': 'http://用户名:密码@ip地址:端口号'
+                }
+
+
+6. Web客户端验证（参数名：auth=(元组)）
+    auth = ("用户名", "密码")
+    auth = ('tarenacode', 'code_2013')
+
+    2_tarenacode.py
+
+
+7. SSL整数认证（参数名：verify=True|False）
+    verify = True; 默认，进行证书认证
+    varify = False; 不做认证
+
+
+8. urllib.requests 中的 Handler 处理器
+    定义
+        自定义的urlopen()方法，因为模块自带的urlopen方法不支持代理，web客户端验证等功能
+        通过Handler处理器自定义urlopen方法
+
+    常用方法
+        opener = build_opener(Handler处理器对象)
+        opener.open(url)
+
+    使用流程
+        创建相关的Handler处理器对象
+        创建自定义opener对象
+        利用opener对象的open方法发请求获取响应
+
+    Handler处理器的分类
+        HTTPHandler(): 没有特殊功能
+        ProxyHandler({普通代理})
+            代理格式{'':''}
+        ProxyBasicAuthHandler(密码管理器对象)
+        HTTPBasicAuthHandler(密码管理器对象)
+
+    密码管理器的用途
+        私密代理
+        web客户端认证
+
+    程序实现流程
+        创建密码管理对象
+            pwdmg = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+        把认证信息添加到对象的属性
+            pwdmg.add_password(None, Webserver, user, password)
+        创建Handler处理器对象
+            proxyhandler = urllib.request.ProxyBasicAuthHandler()
+        创建自定义的opener对象
+            opener = urllib.request.build_opener(proxyhandler)
+
+        利用opener对象的open方法发请求
+            opener.open(req)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
