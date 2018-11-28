@@ -1,0 +1,75 @@
+Xpath 工具
+ 1. xpath
+    在xml文档中查找信息的语言，同样适用于HTML文档检索
+
+ 2. xpath辅助工具
+    Chrome插件：Xpath Helper
+    打开：Ctrl + Shift + X
+
+    Firefox 插件： Xpath checker
+
+ 3. X匹配规则
+    1. 匹配演示
+        1. 匹配bookstore下所有节点 /bookstore
+        2. 查找所有的book节点 // book
+        3. 查找bookstore下的所有book节点  /bookstore/book
+        4. 查找所有book节点下的title节点中，lang属性为'en'的节点：
+            //book/title[@lang='en']
+        5. 查找bookstore下的第2个book节点下的title节点
+            /bookstore/book[2]/title    /text()
+
+    2. 选取节点
+        /: 从根节点开始选取
+        //: 从整个文档中查找节点
+            //price      //bookstore/book//price
+        @: 选取某个节点
+            //div[@class="movie-info"]/a[@class="name"]
+        @: 获取某个节点的属性值
+            获取所有book下的title节点的lang属性的值
+            //book/title/@lang
+            <a href="http://www.xxxx.com/"></a>
+4. 匹配多路径
+    符号： |
+    获取所有book节点下的title节点和price节点
+    //book/title | //book/price
+
+5. 函数
+    contains()
+        匹配1个属性值中包含某个字符串的节点
+
+        所有的title节点中lang属性值包含ch的节点
+        //title[contains(@lang, 'ch')]
+
+    text()
+        //title[contains(@lang,'ch')]/text()
+
+
+
+lxml库及xpath使用
+    lxml库：HTML/XML解析库
+
+    使用流程
+        导入模块 from lxml import etree
+        创建解析对象 parse_hmtl = etree.HTML(html)
+        调用xpath：items = parse_html.xpath('xpath表达式')
+
+
+案例- 糗事百科 - xpath
+    1. 目标：用户昵称，段子内容，好笑数量，评论数量
+    2. 找url，写xpath
+        用户昵称： '//div[contains(@id, 'qiushi_tag')]/div/a/h2'
+        段子内容： './/div[@class="content"]/span'
+        好笑数量： './/i'
+        评论数量： './/i'
+
+
+
+
+
+
+
+
+
+
+
+
