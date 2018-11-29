@@ -1,6 +1,5 @@
 #encoding: utf-8
-import sys
 
-from lxml import etree
-print(sys.version)
 
+for i in filter(lambda x: x%2==1, range(101)):
+    print(i)
