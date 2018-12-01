@@ -1,0 +1,175 @@
+
+京东商品抓取案例
+    目标
+        商品名称，商品价格，评论的数量，商家的名称
+
+        ''''''''
+        把下拉菜单拉到最底部
+        driver.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+        ''''''''
+
+多线程爬虫
+    进程
+        系统中正在运行的一个应用程序
+        一个cpu核心一次只能执行一个进程
+    线程
+        进程中包含的执行单元，一个进程可包含多个进程
+    GIL 全局解释器锁
+
+应用场景
+    多进程：大量的密集计算
+    多线程：I/O操作密集
+        爬虫：网络i/o密集
+
+案例
+    百思不得其姐多线程案例
+        http://www.budejie.com/1
+    目标
+        段子内容
+    xpath表达式
+
+知识点
+    队列
+        from queue import Queue
+        put()
+        get()
+        Queue.empty(): 是否为空
+        Queue.join(): 如果队列为空，执行其他的程序
+    线程
+        from threading import Thread
+        Thread(target=fun, )
+
+
+BeautifulSoup解析
+    定义
+        HTML或XML的解析器，依赖于lxml
+    安装
+        python -m pip install beautifusoup4
+    导入
+        from bs4 import BeautifulSoup as bs
+    创建解析对象
+        soup = BeautifulSoup(html, 'lxml')
+    查找节点对象
+        divs = soup.find_all('div', attrs={'class': 'test'})
+    示例代码：
+        1_beautifulsoup.py
+        2_beautifulsoup2.py
+
+
+    BeautifulSoup支持的解析库
+        1. lxml: soup = BeautifulSoup(html, 'lxml')
+            速度快，文档容错能力强（自动补全代码）
+        2. html.parser : python标准库
+            都一般
+        3. xml
+            速度快，文档容错能力强
+
+
+    节点选择器
+        选择节点
+            节点对象.节点名.string
+
+    find_all()  返回列表
+
+
+Scrapy 框架
+    1. 定义
+        异步处理框架，可配置和可扩展程度非常高，python中使用最广泛的爬虫框架
+    2. 安装Ubuntu
+        * 安装依赖库
+            1、sudo apt-get install python3-dev
+            2、sudo apt-get install python-pip
+            3、sudo apt-get install libxml2-dev
+            5、sudo apt-get install libxs
+            6、sudo apt-get install zlib1g-dev
+            7、sudo apt-get install libffi-dev
+            8、sudo apt-get install libssl-dev
+	    * 安装Scrapy
+            sudo pip3  install Scrapy           ####注意此处S为大写
+            验证(python交互模式)
+                import scrapy                      ####注意此处s为小写
+
+
+Scrapy 框架的五大组件
+    1. 引擎（Engine): 整个框架的核心
+    2. 调度器（Scheduler）： 接受从引擎发过来的URL，入队列
+    3. 下载器（Downloader): 获取网页源码，返给爬虫程序
+    4. 下载器中间件：（Downloader Middlewares）
+
+        蜘蛛中间件：(spider Middlewares)
+    5. 项目管道（Item Pipline）: 负责数据处理
+    6. Scrapy 框架详细的抓取流程
+
+
+制作Scrapy爬虫项目的步骤
+    1. 新建一个项目
+        scrapy startprojct 项目名
+    2. 明确要爬取的目标(items.py)
+    3. 制作爬虫程序
+        进入到spiders文件夹中，执行：
+            scrapy genspider 文件名 "域名"
+    4. 处理数据(pipelines.py)
+    5. 配置settings.py
+    6. 运行爬虫程序
+        scrapy crawl 爬虫名
+
+
+Scrapy 项目文件详解
+    scrapy.cfg 基本配置文件，不用动
+    items.py: 定义爬取的数据结构
+    middlewares.py：下载器中间件和蜘蛛中间件
+    pipeliens.py: 管道文件，处理数据
+    setting.py: 项目的全局配置
+    spiders: 文件夹，存放爬虫程序
+    spiders/xx.py   爬虫程序
+
+
+setting.py 配置查看 scrapy_pro/scrapy_pro/setting.py
+
+
+示例
+    抓取百度首页源码，存到baidu.html 中
+    1. scrapy startproject Baidu
+    2. cd Baidu/Baidu
+    3. subl items.py （不用改）
+    4. cd spiders
+    5. scrapy genspider baidu "www.baidu.com"
+    6. subl baidu.py
+        # 爬虫名
+        # 域名
+        # start_urls
+
+        def parse(self, response):
+            with open('baidu.html', 'w') as wf:
+            wf.write(response.text)
+    7. cd ../
+    8. subl settings.py
+        把robots 改为False
+        添加User-Agent
+            DEFAULT_REQUEST_HEADERS = {
+                'User-Agent': 'Mozilla/5.0',
+                ... ...
+            }
+    9. 启动
+        scrapy crawl baidu(爬虫名)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
