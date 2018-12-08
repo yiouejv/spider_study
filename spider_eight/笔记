@@ -1,0 +1,156 @@
+Day07回顾
+1、reponse.xpath('xpath表达式')
+  1、选择器对象
+    1、xpath表达式没有 /text()
+      [<selector ... data="<div class=....>..."]
+    2、xpath表达式有 /text() /@href
+      [<selector ... data="文本内容"]
+  2、extract() : 将列表中所有的选择器对象序列化为字符串
+2、MONGODB和MySQL
+  1、settings.py
+    MONGODB_HOST =
+    MONGODB_PORT =
+    MONGODB_DATABASE =
+    MONGODB_TABLE =
+  2、pipelines.py
+    1、from Daomu import settings
+    2、创建class
+      class DaomuMongoPipeline(object):
+          def __init__(self):
+	      ...
+	  def process_item(self,item,spider):
+	      ...
+  3、settings.py
+    ITME_PIPELINES = {"":250}
+3、scrapy模块方法
+  yield scrapy.Request(url,callback=解析方法名)
+***************************
+Day08笔记
+1、如何同时开启多个项目管道文件
+  在pipelines.py中所有的管道class中,设置 函数process_item(self,item,spider) 的返回值为 item
+  ######### return item #############
+2、如何保存为csv或者json文件
+  1、scrapy crawl tengxun -o tengxun.csv
+  2、scrapy crawl tengxun -o tengxun.json
+    编码问题 ：settings.py中添加变量
+               FEED_EXPORT_ENCODING = "utf-8"
+3、下载器中间件(DOWNLOADER MIDDLEWARES)
+  1、随机User-Agent
+    1、settings.py
+      方式一 ：USER_AGENT = "Mozilla/5.0..."
+      方式二 ：DEFALUT_REQUEST_HEADERS = {"":"",}
+    2、设置中间件(middlewares.py)
+      1、项目目录中新建userAgents.py,存放大量Agent
+        ## 大量的User-Agent要以字符串方式,不能以字典方式
+      2、middlewares.py中写class
+        class ...(object):
+	  def process_request(self,request,spider):
+	    # headers属性为请求报头,为字典
+	    # request.headers["User-Agent"] = ...
+      3、settings.py中开启 DOWNLOADER_MIDDLEWARES
+  2、设置代理
+    1、middlewares.py
+      class ...(object):
+        def process_request(self,request,spider):
+	  # request的meta可设置代理参数
+	  request.meta["proxy"] = random.choice(.)
+    2、settings.py
+      DOWNLOADER_MIDDLEWAERS = {"":300,}
+4、图片管道 ：ImagePipeline
+  1、使用流程(要操作的文件)
+    1、settings.py
+      设置图片要保存的路径的变量
+      IMAGES_STORE = "/home/tarena/aaa/aaa/images"
+    2、pipelines.py
+      1、导入scrapy定义好的图片管道类
+        from scrapy.pipelines.images import ImagesPipeline
+      2、定义自己的class,继承scrapy的图片管道类
+        class AAAImagePipeline(ImagesPipeline):
+	    def get_media_requests(self,item,info):
+	        ... ...
+  2、案例 ：斗鱼图片抓取案例(手机app)
+    1、菜单 --> 颜值
+      http://capi.douyucdn.cn/api/v1/getVerticalRoom?limit=20&offset=0
+    2、抓取目标
+      1、图片链接
+      2、主播名
+      3、城市
+        把所有图片保存在 IMAGES_STORE
+    3、步骤
+      1、前提 ：手机和电脑一个局域网
+      2、Fiddler抓包工具
+        Connections : Allow remote computers to ..
+	HTTPS : ...from all processes
+      3、IP地址 ：Win+r -> cmd -> ipconfig
+      4、配置手机
+        手机浏览器 ：http://IP:8888
+	下载 FiddlerRoot certificate
+      5、安装
+        设置 -> 更多 -> ... -> 从存储设备安装
+      6、设置手机代理
+        长按 wifi,->代理
+	IP地址 ：
+	端口号 ：
+    4、项目实现
+5、dont_filter参数
+  scrapy.Request(url,callback=parse,dont_filter=.)
+  1、False ：默认,检查域
+  2、True  ：忽略域组检查
+6、Scrapy shell的使用
+  1、scrapy shell "http://www.baidu.com/"
+  2、response.text
+  3、response.body ：获取响应的字节流
+7、CrawlSpider类
+  1、Spider的派生类
+    Spider类 ：只爬取start_urls列表中的网页
+    CrawlSpider类 ：定义了一些规则(ruler)来提供提取链接、跟进链接
+  2、创建CrawlSpider模板爬虫文件
+    加 -t crawl
+    scrapy genspider -t crawl tengxun "XXX.com"
+  3、示例 ：从页面中提取所有的链接
+    1、scrapy shell "https://hr.tencent.com/position.php?"
+    2、from scrapy.linkextractors import LinkExtractor
+    3、linkList=LinkExtractor(allow=("start=\d+"))
+    4、linkList.extract_links(response)
+  4、Rule
+    1、作用 ：对爬取网站动作指定特定操作
+      rules = (
+        Rule(LinkExtractor(allow=r'start=\d+'),
+        callback='parseHtml',
+	follow=True),
+      )
+  5、腾讯招聘-CrawlSpider
+8、机器视觉与tesseract
+  1、OCR(Optical Character Recngnition)
+    光学字符识别
+    扫描字符 ：通过字符的形状  --> 电子文本,OCR有很多的底层识别库
+  2、安装
+    Windows下 ：
+      https://sourceforge.net/projects/tesseract-ocr-alt/files/tesseract-ocr-setup-3.02.02.exe/download
+    Ubuntu: sudo apt-get install tesseract-ocr
+    Mac   : brew install tesseract
+  3、验证
+    终端 ：tesseract test1.jpg test1.txt
+  4、安装pytesseract模块
+    python -m pip install pytesseract
+    # 方法很少,就用1个,图片转字符串：image_to_string
+  5、示例
+    1、导模块
+    2、创建图片对象
+    3、转成字符串
+9、Scrapy模拟登陆
+  1、运行爬虫 ：scrapy runspider renren.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
